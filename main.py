@@ -13,10 +13,6 @@ from utils import (
     rank_degs_by_statistic,
     get_columns_list,
     get_sub_dfs,
-    create_models,
-    to_x_y,
-    train_models,
-    features_selection,
     check_directory
 )
 
@@ -113,12 +109,13 @@ def main():
 
     GE_lusc_ratio = pd.DataFrame(GE_lusc_ratio, index=GE_lusc_ratio.index)
     # Rank DEGs by fold change values
+    print(DEGs_lusc_df.head())
     lusc_degs_ranked_by_log2FC = rank_degs_by_fold_change(
-        GE_lusc_ratio.loc[DEGs_lusc_df["Gene_Name"]]
+        GE_lusc_ratio.loc[statistics_lusc_df.index]
     )
     lusc_degs_ranked_by_log2FC.to_csv("results/csv files/lusc_degs_ranked_by_log2fc.csv", index=True)
 
-    lusc_degs_ranked_by_statistic = rank_degs_by_fold_change(
+    lusc_degs_ranked_by_statistic = rank_degs_by_statistic(
         GE_lusc_with_statistic
     )
 
@@ -150,50 +147,6 @@ def main():
     print(lusc_genes_stat)
     # Create the dataframes of each gene
     lusc_dfs = get_sub_dfs(lusc_final_form_FC, lusc_genes)
-
-    # lusc_models = {
-    #     "scikit": {},
-    #     "statsmodels": {},
-    # }
-    #
-    # output_directory = "results/models/OLS models/test statistic"
-    #
-    # # Create the models of each gene in the 2 lists, save their summary to the "results" folder
-    # create_models(lusc_dfs, lusc_models, output_directory, "LUSC")
-    #
-    # # Data Preparation: Split the data into features and target variables
-    # lusc_data = to_x_y(lusc_final_form)
-    #
-    # # Model Training and Evaluation for Ridge and Lasso Regression:
-    # # - Train Ridge and Lasso regression models using hyperparameter tuning (RandomizedSearchCV).
-    # # - Evaluate models using R-squared (r2) and Mean Squared Error (MSE).
-    # # - Store the results and models for each dataset and regression type.
-    # lusc_ridge_models, lusc_ridge_results = train_models(lusc_data, "Ridge")
-    # lusc_lasso_models, lusc_lasso_results = train_models(lusc_data, "Lasso")
-    #
-    # # Feature Selection:
-    # # - Select features that the models consider significant (non-zero coefficients).
-    # # - Store selected features and their coefficients for each dataset and regression type.
-    # lusc_lasso_fs = features_selection(lusc_data[0].columns, lusc_lasso_models, lusc_lasso_results,
-    #                                    "results/models/Lasso models/Lusc/ranked by test statistic",
-    #                                    "Lasso")
-    # lusc_ridge_fs = features_selection(lusc_data[0].columns, lusc_ridge_models, lusc_ridge_results,
-    #                                    "results/models/Ridge models/Lusc/ranked by test statistic",
-    #                                    "Ridge")
-    # # Organize Results:
-    # # - Create dictionaries for the dataset to store results, models, and selected features.
-    #
-    #
-    # lusc = {
-    #     ("results_ridge", "results_lasso"): (lusc_ridge_results, lusc_lasso_results),
-    #     ("models_ridge", "models_lasso"): (lusc_ridge_models, lusc_lasso_models),
-    #     ("selected_features_ridge", "selected_features_lasso"): (lusc_ridge_fs, lusc_lasso_fs)
-    # }
-    #
-    # # Final Data Organization:
-    # # - Create a final dictionary that associates the dataset
-    # # - with its results, models, and selected features.
-    # final = {"lusc": lusc}
 
 
 if __name__ == "__main__":
