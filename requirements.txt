@@ -1,0 +1,9 @@
+PyQt5
+PyQtWebEngine
+pandas
+numpy
+plotly
+matplotlib
+statsmodels
+scipy
+scikit-learn
