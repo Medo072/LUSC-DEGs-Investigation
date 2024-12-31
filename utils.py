@@ -382,7 +382,7 @@ def rank_degs_by_fold_change(data: pd.DataFrame):
     fold_change_sorted = fold_change.sort_values(by="abslog2FC", ascending=False)
 
     # Return the sorted DataFrame
-    return fold_change_sorted["abslog2FC"]
+    return fold_change_sorted
 
 
 def rank_degs_by_statistic(data: pd.DataFrame):
