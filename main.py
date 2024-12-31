@@ -67,10 +67,14 @@ def main():
     print(f"Mean gene expression values for LUSC dataset:\n{df_lusc_means}")
 
     # Find the list of DEGs of the LUSC dataset, in addition to the list of p_value_lusc
-    DEGs_lusc, p_values_lusc, statistics_lusc = find_degs(GE_lusc_healthy.iloc[:, 1:], GE_lusc_tumor.iloc[:, 1:])
+    DEGs_lusc, p_values_lusc, statistics_lusc = find_degs(GE_lusc_healthy.iloc[:, 1:], GE_lusc_tumor.iloc[:, 1:], "paired")
+    DEGs_lusc_ind, p_values_lusc_ind, statistics_lusc_ind = find_degs(GE_lusc_healthy.iloc[:, 1:], GE_lusc_tumor.iloc[:, 1:], "independent")
 
     # Save the list of LUSC DEGs to DEGs_lusc.csv file
     save_list_to_csv(DEGs_lusc, "Gene_Name", "results/csv files/DEGs_lusc.csv")
+    print("List of DEGs in LUSC dataset is saved as DEGs_lusc.csv")
+
+    save_list_to_csv(DEGs_lusc_ind, "Gene_Name", "results/csv files/DEGs_lusc_ind.csv")
     print("List of DEGs in LUSC dataset is saved as DEGs_lusc.csv")
 
     # Convert the p_value_lusc to a dataframe and save it to p_values_lusc.csv
@@ -82,8 +86,19 @@ def main():
     statistics_lusc_df.to_csv("results/csv files/statistic_lusc.csv", index=False)
     print("List of statistic of each gene in LUSC dataset is saved as statistic_lusc.csv")
 
+    p_values_lusc_ind_df = pd.DataFrame(p_values_lusc_ind)
+    p_values_lusc_ind_df.to_csv("results/csv files/p_values_lusc_ind.csv", index=False)
+    print("List of p_value of each gene in LUSC dataset is saved as p_values_lusc_ind.csv")
+
+    statistics_lusc_ind_df = pd.DataFrame(statistics_lusc_ind)
+    statistics_lusc_ind_df.to_csv("results/csv files/statistic_lusc_ind.csv", index=False)
+    print("List of statistic of each gene in LUSC dataset is saved as statistic_lusc_ind.csv")
+
     DEGs_lusc_df = pd.DataFrame({"Gene_Name": DEGs_lusc})
     statistics_lusc_df.set_index("Gene_Name", inplace=True)
+
+    DEGs_lusc_ind_df = pd.DataFrame({"Gene_Name": DEGs_lusc})
+    statistics_lusc_ind_df.set_index("Gene_Name", inplace=True)
     
     DEGs_with_p_values = p_values_lusc_df.loc[DEGs_lusc_df.index]
     DEGs_with_p_values.to_csv("results/csv files/DEGs_with_p_values.csv", index=False)
@@ -93,7 +108,7 @@ def main():
     )
 
     GE_lusc_with_statistic = statistics_lusc_df.loc[DEGs_lusc_df["Gene_Name"]]
-
+    GE_lusc_with_statistic_ind = statistics_lusc_ind_df.loc[DEGs_lusc_ind_df["Gene_Name"]]
     # Set the index of CNA data to be the 'feature' column
     lusc_CNA.set_index("feature", inplace=True)
 
@@ -121,6 +136,10 @@ def main():
     lusc_degs_ranked_by_statistic = rank_degs_by_statistic(
         GE_lusc_with_statistic
     )
+    
+    lusc_degs_ranked_by_statistic_ind = rank_degs_by_statistic(
+        GE_lusc_with_statistic_ind
+    )
 
     print(type(lusc_degs_ranked_by_log2FC))
     print(type(lusc_CNA_common))
@@ -141,15 +160,24 @@ def main():
         ],
         axis=1,
     ) 
+    
+    lusc_final_form_hyp_ind = pd.concat(
+        [
+            lusc_tumor_data.loc[lusc_degs_ranked_by_statistic_ind.head().index].transpose(),
+            pd.DataFrame(lusc_CNA_common),
+        ],
+        axis=1,
+    ) 
 
     # Get the list of most significant genes
-    lusc_genes = get_columns_list(lusc_final_form_FC, 5)
+    lusc_genes = get_columns_list(lusc_final_form_FC, 10)
     print(lusc_genes)
     
-    lusc_genes_stat = get_columns_list(lusc_final_form_hyp, 5)
+    lusc_genes_stat = get_columns_list(lusc_final_form_hyp, 10)
     print(lusc_genes_stat)
-    # Create the dataframes of each gene
-    lusc_dfs = get_sub_dfs(lusc_final_form_FC, lusc_genes)
+    
+    lusc_genes_stat_ind = get_columns_list(lusc_final_form_hyp_ind, 10)
+    print(lusc_genes_stat_ind)
 
 
 if __name__ == "__main__":

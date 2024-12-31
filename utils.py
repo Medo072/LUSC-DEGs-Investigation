@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from scipy.stats import false_discovery_control
-from scipy.stats import shapiro, wilcoxon
+from scipy.stats import shapiro, wilcoxon, ranksums
 from scipy.stats import t
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import r2_score, mean_squared_error
@@ -144,7 +144,7 @@ def calc_p_values(healthy, tumor):
     return output_genes, p_values, output_with_statistic
 
 
-def calc_p_values(healthy, tumor):
+def calc_p_values(healthy, tumor, sample_type):
     """
     Compare the gene expression between healthy and tumor samples to identify differentially expressed genes.
 
@@ -184,8 +184,11 @@ def calc_p_values(healthy, tumor):
     output_with_statistic = []
     # Iterate over each gene in the input data
     for gene in healthy.index:
-        # Calculate the Wilcoxon p-value for the gene's expression between healthy and tumor samples
-        statistic, p_value_wilcoxon = wilcoxon(healthy.loc[gene], tumor.loc[gene])
+        if sample_type == "paired":
+            # Calculate the Wilcoxon p-value for the gene's expression between healthy and tumor samples
+            statistic, p_value_wilcoxon = wilcoxon(healthy.loc[gene], tumor.loc[gene])
+        else:
+            statistic, p_value_wilcoxon = ranksums(healthy.loc[gene], tumor.loc[gene])
 
         # Append the gene name and p-value to the output lists
         p_values.append(p_value_wilcoxon)
@@ -196,7 +199,7 @@ def calc_p_values(healthy, tumor):
     return output_genes, p_values, output_with_statistic
 
 
-def find_degs(healthy, tumor):
+def find_degs(healthy, tumor, sample_type):
     """
     Find differentially expressed genes (DEGs) between healthy and tumor samples.
 
@@ -238,7 +241,7 @@ def find_degs(healthy, tumor):
             non_normal_genes.append(gene)
 
     # Calculate p-values for all genes and identify DEGs using false discovery rate control
-    genes_and_p_values, p_values, genes_and_statistic = calc_p_values(healthy, tumor)
+    genes_and_p_values, p_values, genes_and_statistic = calc_p_values(healthy, tumor, sample_type=sample_type)
 
     # Apply false discovery rate control to the p-values
     p_values_after_fdr = false_discovery_control(p_values)
