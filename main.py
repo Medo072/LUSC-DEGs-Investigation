@@ -84,7 +84,10 @@ def main():
 
     DEGs_lusc_df = pd.DataFrame({"Gene_Name": DEGs_lusc})
     statistics_lusc_df.set_index("Gene_Name", inplace=True)
-
+    
+    DEGs_with_p_values = p_values_lusc_df.loc[DEGs_lusc_df.index]
+    DEGs_with_p_values.to_csv("results/csv files/DEGs_with_p_values.csv", index=False)
+    
     lusc_CNA = pd.read_csv(
         "data/lusc_CNV_core.txt", delimiter="\t", keep_default_na=False
     )
@@ -109,7 +112,7 @@ def main():
 
     GE_lusc_ratio = pd.DataFrame(GE_lusc_ratio, index=GE_lusc_ratio.index)
     # Rank DEGs by fold change values
-    print(DEGs_lusc_df.head())
+    print(GE_lusc_ratio)
     lusc_degs_ranked_by_log2FC = rank_degs_by_fold_change(
         GE_lusc_ratio.loc[statistics_lusc_df.index]
     )
