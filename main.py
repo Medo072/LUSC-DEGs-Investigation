@@ -13,7 +13,9 @@ from utils import (
     rank_degs_by_statistic,
     get_columns_list,
     get_sub_dfs,
-    check_directory
+    check_directory,
+    create_volcano_plot,
+    perform_gsea_analysis,
 )
 
 warnings.filterwarnings("ignore")
@@ -178,6 +180,18 @@ def main():
     
     lusc_genes_stat_ind = get_columns_list(lusc_final_form_hyp_ind, 10)
     print(lusc_genes_stat_ind)
+    # Create a volcano plot
+    create_volcano_plot(
+        'results/csv files/DEGs_with_p_values.csv',
+        'results/csv files/lusc_degs_ranked_by_log2fc.csv'
+    )
+
+    # Perform GSEA analysis
+    perform_gsea_analysis(
+        'results/csv files/lusc_degs_ranked_by_log2fc.csv',
+        'results/csv files/DEGs_with_p_values.csv',
+        'Cancer_Cell_Line_Encyclopedia'
+    )
 
 
 if __name__ == "__main__":
