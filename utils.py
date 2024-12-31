@@ -92,58 +92,6 @@ def extract_non_zeros(df_h, df_t):
     return df_h_non_zeros, df_t_non_zeros
 
 
-def calc_p_values(healthy, tumor):
-    """
-    Compare the gene expression between healthy and tumor samples to identify differentially expressed genes.
-
-    This function calculates the statistical significance of the difference in gene expression
-    between healthy and tumor samples for each gene using the Wilcoxon Signed Rank-Sum Test.
-
-    Parameters:
-        healthy (pandas.Series): Gene expression data for healthy samples.
-        tumor (pandas.Series): Gene expression data for tumor samples.
-
-    Returns:
-        list of dict: A list of dictionaries containing gene names and their associated p-values
-                     indicating differential expression. If no genes are differentially expressed,
-                     an empty list is returned. Each dictionary includes the following keys:
-                     - "Gene_Name" (str): The name of the gene.
-                     - "P_Value" (float): The p-value of the Wilcoxon test.
-
-    Notes:
-        - The Wilcoxon Signed Rank-Sum Test is applied to each gene to compare gene expression
-          between healthy and tumor samples.
-        - Genes with p-values less than 0.05 (alpha) are considered differentially expressed and included
-          in the output list.
-        - If no genes are differentially expressed, the function returns an empty list.
-
-    Examples:
-         healthy_data = pd.Series([1.2, 1.4, 1.6, 1.8, 2.0])
-         tumor_data = pd.Series([2.1, 2.3, 2.5, 2.7, 2.9])
-         result = calc_p_values(healthy_data, tumor_data)
-         print(result)
-        [{'Gene_Name': 'Gene1', 'P_Value': 0.023}, {'Gene_Name': 'Gene2', 'P_Value': 0.042}]
-
-    """
-    # Initialize empty lists to store genes with significant differential expression and their p-values
-    output_genes = []
-    p_values = []
-    statistics = []
-    output_with_statistic = []
-    # Iterate over each gene in the input data
-    for gene in healthy.index:
-        # Calculate the Wilcoxon p-value for the gene's expression between healthy and tumor samples
-        statistic, p_value_wilcoxon = wilcoxon(healthy.loc[gene], tumor.loc[gene])
-
-        # Append the gene name and p-value to the output lists
-        p_values.append(p_value_wilcoxon)
-        statistics.append(statistic)
-        output_genes.append({"Gene_Name": gene, "P_Value": p_value_wilcoxon})
-        output_with_statistic.append({"Gene_Name": gene, "Statistic": statistic})
-    # Return the list of genes with significant differential expression
-    return output_genes, p_values, output_with_statistic
-
-
 def calc_p_values(healthy, tumor, sample_type):
     """
     Compare the gene expression between healthy and tumor samples to identify differentially expressed genes.
