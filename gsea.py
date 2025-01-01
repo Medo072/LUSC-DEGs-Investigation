@@ -33,7 +33,7 @@ ranked_data.columns = ['gene', 'score']
 debug_print("Ranked data head", ranked_data.head())
 
 # Save the ranked data to a file (optional)
-ranked_data_file = 'rnk_files/ranked_gene_list.rnk'
+ranked_data_file = 'ranked_gene_list.rnk'
 ranked_data.to_csv(ranked_data_file, sep='\t', index=False, header=False)
 
 # Run GSEA
@@ -49,8 +49,9 @@ debug_print("Column names in GSEA results", gsea_results.res2d.columns)
 debug_print("GSEA results head", gsea_results.res2d.head())
 
 # Save summary of results
-gsea_results.res2d.to_csv('GSEA_summary/gsea_summary.csv', index=False)
+gsea_results.res2d.to_csv('GSEA_results/gsea_summary.csv', index=False)
 
+print("GSEA analysis completed!")
 
 
 # Prepare data for visualization
