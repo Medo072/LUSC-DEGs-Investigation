@@ -10,8 +10,8 @@ def debug_print(message, value):
     print(f"{message}: {value}")
 
 # Load the data
-pvalues_file = 'degs/DEGs_with_p_values.csv'
-log2fc_file = 'degs/lusc_degs_ranked_by_log2fc.csv'
+pvalues_file = './results/csv files/DEGs_with_p_values.csv'
+log2fc_file = './results/csv files/lusc_degs_ranked_by_log2fc.csv'
 
 # Read the CSV files
 pvalues_df = pd.read_csv(pvalues_file)
