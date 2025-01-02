@@ -2,14 +2,9 @@ import os
 
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
 from scipy.stats import false_discovery_control
 from scipy.stats import shapiro, wilcoxon, ranksums
 from scipy.stats import t
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.metrics import r2_score, mean_squared_error
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -441,8 +436,10 @@ def rank_degs_by_fold_change(data: pd.DataFrame):
         pd.DataFrame: A new DataFrame with DEGs ranked by absolute fold change in descending order.
     """
     # Calculate the logarithm (base 2) of fold change and store it in a new column 'log2FC'
+    data["Gene_Name"] = data.index
+    data.set_index("Gene_Name", inplace=True)
     data["log2FC"] = np.log2(data)
-
+    print(data.head())
     # Calculate the absolute value of 'log2FC' and store it in a new column 'abslog2FC'
     data["abslog2FC"] = np.abs(data["log2FC"])
 

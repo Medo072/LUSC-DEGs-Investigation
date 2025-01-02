@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 # Load the data
 pvalues_df = pd.read_csv('results/csv files/DEGs_with_p_values.csv')   # Replace with your p-values file name
 log2_fc_df = pd.read_csv('results/csv files/lusc_degs_ranked_by_log2fc.csv')  # Replace with your log2 fold change file name
-
 # Merge the DataFrames on 'Gene' column
 merged_df = pd.merge(log2_fc_df, pvalues_df, on='Gene_Name')
 

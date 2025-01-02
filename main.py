@@ -12,7 +12,6 @@ from utils import (
     rank_degs_by_fold_change,
     rank_degs_by_statistic,
     get_columns_list,
-    get_sub_dfs,
     check_directory,
     create_volcano_plot,
     perform_gsea_analysis,
@@ -63,7 +62,7 @@ def main():
         {"Healthy": GE_lusc_healthy_means, "Tumor": GE_lusc_tumor_means}
     )
     check_directory("results/csv files")
-    GE_lusc_ratio = GE_lusc_healthy_means / GE_lusc_tumor_means
+    GE_lusc_ratio = GE_lusc_tumor_means / GE_lusc_healthy_means
 
     # Print the DataFrame containing mean gene expression values for lusc
     print(f"Mean gene expression values for LUSC dataset:\n{df_lusc_means}")
@@ -131,7 +130,7 @@ def main():
     # Rank DEGs by fold change values
     print(GE_lusc_ratio)
     lusc_degs_ranked_by_log2FC = rank_degs_by_fold_change(
-        GE_lusc_ratio.loc[statistics_lusc_df.index]
+        GE_lusc_ratio
     )
     lusc_degs_ranked_by_log2FC.to_csv("results/csv files/lusc_degs_ranked_by_log2fc.csv", index=True)
 
@@ -143,42 +142,40 @@ def main():
         GE_lusc_with_statistic_ind
     )
 
-    print(type(lusc_degs_ranked_by_log2FC))
-    print(type(lusc_CNA_common))
     # Print the ranked DEGs based on fold change values
 
-    lusc_final_form_FC = pd.concat(
-        [
-            lusc_tumor_data.loc[lusc_degs_ranked_by_log2FC.head().index].transpose(),
-            pd.DataFrame(lusc_CNA_common),
-        ],
-        axis=1,
-    )
+    # lusc_final_form_FC = pd.concat(
+    #     [
+    #         lusc_tumor_data.loc[lusc_degs_ranked_by_log2FC.head().index].transpose(),
+    #         pd.DataFrame(lusc_CNA_common),
+    #     ],
+    #     axis=1,
+    # )
     
-    lusc_final_form_hyp = pd.concat(
-        [
-            lusc_tumor_data.loc[lusc_degs_ranked_by_statistic.head().index].transpose(),
-            pd.DataFrame(lusc_CNA_common),
-        ],
-        axis=1,
-    ) 
+    # lusc_final_form_hyp = pd.concat(
+    #     [
+    #         lusc_tumor_data.loc[lusc_degs_ranked_by_statistic.head().index].transpose(),
+    #         pd.DataFrame(lusc_CNA_common),
+    #     ],
+    #     axis=1,
+    # ) 
     
-    lusc_final_form_hyp_ind = pd.concat(
-        [
-            lusc_tumor_data.loc[lusc_degs_ranked_by_statistic_ind.head().index].transpose(),
-            pd.DataFrame(lusc_CNA_common),
-        ],
-        axis=1,
-    ) 
+    # lusc_final_form_hyp_ind = pd.concat(
+    #     [
+    #         lusc_tumor_data.loc[lusc_degs_ranked_by_statistic_ind.head().index].transpose(),
+    #         pd.DataFrame(lusc_CNA_common),
+    #     ],
+    #     axis=1,
+    # ) 
 
     # Get the list of most significant genes
-    lusc_genes = get_columns_list(lusc_final_form_FC, 10)
+    lusc_genes = get_columns_list(lusc_degs_ranked_by_log2FC.transpose(), 10)
     print(lusc_genes)
     
-    lusc_genes_stat = get_columns_list(lusc_final_form_hyp, 10)
+    lusc_genes_stat = get_columns_list(lusc_degs_ranked_by_statistic.transpose(), 10)
     print(lusc_genes_stat)
     
-    lusc_genes_stat_ind = get_columns_list(lusc_final_form_hyp_ind, 10)
+    lusc_genes_stat_ind = get_columns_list(lusc_degs_ranked_by_statistic_ind.transpose(), 10)
     print(lusc_genes_stat_ind)
     # Create a volcano plot
     create_volcano_plot(
