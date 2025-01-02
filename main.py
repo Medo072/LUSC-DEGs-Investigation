@@ -61,7 +61,7 @@ def main():
     df_lusc_means = pd.DataFrame(
         {"Healthy": GE_lusc_healthy_means, "Tumor": GE_lusc_tumor_means}
     )
-    check_directory("results/csv files")
+    check_directory("results/")
     GE_lusc_ratio = GE_lusc_tumor_means / GE_lusc_healthy_means
 
     # Print the DataFrame containing mean gene expression values for lusc
@@ -72,27 +72,27 @@ def main():
     DEGs_lusc_ind, p_values_lusc_ind, statistics_lusc_ind = find_degs(GE_lusc_healthy.iloc[:, 1:], GE_lusc_tumor.iloc[:, 1:], "independent")
 
     # Save the list of LUSC DEGs to DEGs_lusc.csv file
-    save_list_to_csv(DEGs_lusc, "Gene_Name", "results/csv files/DEGs_lusc.csv")
+    save_list_to_csv(DEGs_lusc, "Gene_Name", "results/DEGs_lusc.csv")
     print("List of DEGs in LUSC dataset is saved as DEGs_lusc.csv")
 
-    save_list_to_csv(DEGs_lusc_ind, "Gene_Name", "results/csv files/DEGs_lusc_ind.csv")
+    save_list_to_csv(DEGs_lusc_ind, "Gene_Name", "results/DEGs_lusc_ind.csv")
     print("List of DEGs in LUSC dataset is saved as DEGs_lusc.csv")
 
     # Convert the p_value_lusc to a dataframe and save it to p_values_lusc.csv
     p_values_lusc_df = pd.DataFrame(p_values_lusc)
-    p_values_lusc_df.to_csv("results/csv files/p_values_lusc.csv", index=False)
+    p_values_lusc_df.to_csv("results/p_values_lusc.csv", index=False)
     print("List of p_value of each gene in LUSC dataset is saved as p_values_lusc.csv")
 
     statistics_lusc_df = pd.DataFrame(statistics_lusc)
-    statistics_lusc_df.to_csv("results/csv files/statistic_lusc.csv", index=False)
+    statistics_lusc_df.to_csv("results/statistic_lusc.csv", index=False)
     print("List of statistic of each gene in LUSC dataset is saved as statistic_lusc.csv")
 
     p_values_lusc_ind_df = pd.DataFrame(p_values_lusc_ind)
-    p_values_lusc_ind_df.to_csv("results/csv files/p_values_lusc_ind.csv", index=False)
+    p_values_lusc_ind_df.to_csv("results/p_values_lusc_ind.csv", index=False)
     print("List of p_value of each gene in LUSC dataset is saved as p_values_lusc_ind.csv")
 
     statistics_lusc_ind_df = pd.DataFrame(statistics_lusc_ind)
-    statistics_lusc_ind_df.to_csv("results/csv files/statistic_lusc_ind.csv", index=False)
+    statistics_lusc_ind_df.to_csv("results/statistic_lusc_ind.csv", index=False)
     print("List of statistic of each gene in LUSC dataset is saved as statistic_lusc_ind.csv")
 
     DEGs_lusc_df = pd.DataFrame({"Gene_Name": DEGs_lusc})
@@ -102,7 +102,7 @@ def main():
     statistics_lusc_ind_df.set_index("Gene_Name", inplace=True)
     
     DEGs_with_p_values = p_values_lusc_df.loc[DEGs_lusc_df.index]
-    DEGs_with_p_values.to_csv("results/csv files/DEGs_with_p_values.csv", index=False)
+    DEGs_with_p_values.to_csv("results/DEGs_with_p_values.csv", index=False)
     
     lusc_CNA = pd.read_csv(
         "data/lusc_CNV_core.txt", delimiter="\t", keep_default_na=False
@@ -132,7 +132,7 @@ def main():
     lusc_degs_ranked_by_log2FC = rank_degs_by_fold_change(
         GE_lusc_ratio
     )
-    lusc_degs_ranked_by_log2FC.to_csv("results/csv files/lusc_degs_ranked_by_log2fc.csv", index=True)
+    lusc_degs_ranked_by_log2FC.to_csv("results/lusc_degs_ranked_by_log2fc.csv", index=True)
 
     lusc_degs_ranked_by_statistic = rank_degs_by_statistic(
         GE_lusc_with_statistic
@@ -179,14 +179,14 @@ def main():
     print(lusc_genes_stat_ind)
     # Create a volcano plot
     create_volcano_plot(
-        'results/csv files/DEGs_with_p_values.csv',
-        'results/csv files/lusc_degs_ranked_by_log2fc.csv'
+        'results/DEGs_with_p_values.csv',
+        'results/lusc_degs_ranked_by_log2fc.csv'
     )
 
     # Perform GSEA analysis
     perform_gsea_analysis(
-        'results/csv files/lusc_degs_ranked_by_log2fc.csv',
-        'results/csv files/DEGs_with_p_values.csv',
+        'results/lusc_degs_ranked_by_log2fc.csv',
+        'results/DEGs_with_p_values.csv',
         'Cancer_Cell_Line_Encyclopedia'
     )
 
